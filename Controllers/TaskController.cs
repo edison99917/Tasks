@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
-using Tasks.Data;
-using Tasks.Models;
 
-namespace Tasks.Controllers
+using Edison.Data;
+
+namespace Edison.Controllers
 {
     [Authorize]
     public class TaskController : Controller
@@ -25,13 +24,13 @@ namespace Tasks.Controllers
             {
                 using (var context = new EdisonContext())
                 {
-                    tasks = context.Tasks.ToList();
+                    tasks = context.Task.ToList();
                 }
             }
             catch
             {
                 _logger.Log(LogLevel.Error, "Load Error", tasks);
-                return RedirectToAction("Error");
+                return RedirectToAction("Error", "Home");
             }
 
             _logger.Log(LogLevel.Information, "Load Success", tasks);
@@ -42,7 +41,7 @@ namespace Tasks.Controllers
         public IActionResult Create()
         {
             Models.TaskModel model = new Models.TaskModel();
-            model.Priorities = GetEnumList<Priority>();
+            model.Priorities = GetEnumList<Models.Priority>();
 
             return View(model);
         }
@@ -54,7 +53,7 @@ namespace Tasks.Controllers
             {
                 using (var context = new EdisonContext())
                 {
-                    context.Tasks.Add(model.Task!);
+                    context.Task.Add(model.Task!);
                     context.Entry(model.Task!).State = EntityState.Added;
                     context.SaveChanges();
                 }
@@ -62,7 +61,7 @@ namespace Tasks.Controllers
             catch
             {
                 _logger.Log(LogLevel.Error, "Create Error", model.Task);
-                return RedirectToAction("Error");
+                return RedirectToAction("Error", "Home");
             }
 
             _logger.Log(LogLevel.Information, "Create Success", model.Task);
@@ -73,19 +72,19 @@ namespace Tasks.Controllers
         public IActionResult Edit(int Id)
         {
             Models.TaskModel model = new Models.TaskModel();
-            model.Priorities = GetEnumList<Priority>();
+            model.Priorities = GetEnumList<Models.Priority>();
 
             try
             {
                 using (var context = new EdisonContext())
                 {
-                    model.Task = context.Tasks.First(t => t.ID.Equals(Id));
+                    model.Task = context.Task.First(t => t.ID.Equals(Id));
                 }
             }
             catch
             {
                 _logger.Log(LogLevel.Error, "Load Edit Error", Id);
-                return RedirectToAction("Error");
+                return RedirectToAction("Error", "Home");
             }
 
             _logger.Log(LogLevel.Information, "Load Edit Success", model.Task);
@@ -95,21 +94,21 @@ namespace Tasks.Controllers
         [HttpPost]
         public IActionResult Edit(Models.TaskModel model)
         {
-            model.Priorities = GetEnumList<Priority>();
-
-            try
+            using (var context = new EdisonContext())
             {
-                using (var context = new EdisonContext())
+                try
                 {
-                    context.Tasks.Update(model.Task!);
+                    context.Task.Update(model.Task!);
                     context.Entry(model.Task!).State = EntityState.Modified;
                     context.SaveChanges();
                 }
-            }
-            catch
-            {
-                _logger.Log(LogLevel.Error, "Edit Error", model.Task);
-                return View(model);
+                catch
+                {
+                    model.Priorities = GetEnumList<Models.Priority>();
+
+                    _logger.Log(LogLevel.Error, "Edit Error", model.Task);
+                    return View(model);
+                }
             }
 
             _logger.Log(LogLevel.Information, "Edit Success", model.Task);
@@ -123,8 +122,8 @@ namespace Tasks.Controllers
             {
                 using (var context = new EdisonContext())
                 {
-                    var task = context.Tasks.First(t => t.ID.Equals(Id));
-                    context.Tasks.Remove(task);
+                    var task = context.Task.First(t => t.ID.Equals(Id));
+                    context.Task.Remove(task);
                     context.Entry(task).State = EntityState.Deleted;
                     context.SaveChanges();
                 }
@@ -132,17 +131,11 @@ namespace Tasks.Controllers
             catch
             {
                 _logger.Log(LogLevel.Error, "Delete Error", Id);
-                return RedirectToAction("Error");
+                return RedirectToAction("Error", "Home");
             }
 
             _logger.Log(LogLevel.Information, "Delete Success", Id);
             return RedirectToAction("Index");
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
         private static List<T> GetEnumList<T>()

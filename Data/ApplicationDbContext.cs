@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Tasks.Data
+namespace Edison.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {

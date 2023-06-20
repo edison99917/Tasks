@@ -1,16 +1,19 @@
-﻿@model List<Edison.Models.Task>
+﻿@model List<Edison.Models.Asset>
 
-@Html.ActionLink("Create New", "Create", "Task")
-<br /><br />
+@Html.ActionLink("Create New", "Create", "Asset")
+<br />
+<br />
 <div class="text-center">
     <table id="table-tasks" class="display">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Due Date</th>
-                <th>Priority</th>
-                <th>Completed</th>
+                <th>Asset Code</th>
+                <th>Asset Name</th>
+                <th>Asset Category/th>
+                <th>Department</th>
+                <th>Purchase Date</th>
+                <th>Price</th>
+                <th>Supplier Name</th>
                 <th></th>
             </tr>
         </thead>
@@ -19,19 +22,25 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Name)
+                        @Html.DisplayFor(modelItem => item.AssetCode)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Description)
+                        @Html.DisplayFor(modelItem => item.AssetName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.DueDate)
+                        @Html.DisplayFor(modelItem => item.AssetCategory!.Name)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Priority)
+                        @Html.DisplayFor(modelItem => item.Department!.Name)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.IsCompleted)
+                        @Html.DisplayFor(modelItem => item.PurchaseDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Price)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SupplierName)
                     </td>
                     <td>
                         @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |

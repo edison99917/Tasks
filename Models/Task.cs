@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Tasks.Models
+namespace Edison.Models
 {
     public class Task
     {
