@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 using Edison.Data;
+using Edison.Models;
 
 namespace Edison.Controllers
 {
@@ -24,7 +25,18 @@ namespace Edison.Controllers
             {
                 using (var context = new EdisonContext())
                 {
-                    assets = context.Asset.ToList();
+                    assets = (from c in context.Asset
+                              select new Asset
+                              {
+                                  ID = c.ID,
+                                  AssetCode = c.AssetCode,
+                                  AssetName = c.AssetName,
+                                  AssetCategory = context.AssetCategory.Where(x => x.ID.Equals(c.AssetCategoryID)).First(),
+                                  Department = context.Department.Where(x => x.ID.Equals(c.DepartmentID)).First(),
+                                  PurchaseDate = c.PurchaseDate,
+                                  Price = c.Price,
+                                  SupplierName = c.SupplierName
+                              }).ToList();
                 }
             }
             catch

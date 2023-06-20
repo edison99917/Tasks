@@ -1,4 +1,6 @@
-﻿namespace Edison.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Edison.Models
 {
     public class AssetCategory
     {
